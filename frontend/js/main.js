@@ -9,6 +9,7 @@ const socket = io();
 const messagesDiv = document.getElementById("messages");
 const input = document.getElementById("input");
 const sendBtn = document.getElementById("sendBtn");
+//const joinBtn = document.getElementById("joinBtn");
 
 // --- Country flag setup ---
 let userCountry = "🌍"; // default flag
@@ -63,6 +64,10 @@ function displayMessage(msgData) {
   const newMessage = document.createElement("div");
   newMessage.classList.add("bubble");
 
+  // Only allow approved colors
+  const allowedColors = ["#a12e20", "#3eaf5f", "#2244f5", "#e16efd", "#785651", "#d95de0"];
+  const userColor = allowedColors.includes(msgData.userColor) ? msgData.userColor : "#000000";
+
   // Highlight if the user is mentioned
   if (msgData.text.includes(`@${username}`)) {
     newMessage.classList.add("pinged");
@@ -70,7 +75,7 @@ function displayMessage(msgData) {
 
   newMessage.innerHTML = `
     <div class="message-header">
-      <span class="username" style="color:${msgData.userColor}">
+      <span class="username" style="color:${userColor}">
         ${msgData.username} ${flag}
       </span>
       <span class="userid">#id:${msgData.userId}~${msgData.time}</span>
@@ -82,6 +87,7 @@ function displayMessage(msgData) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
+
 // --- Socket.IO events ---
 // Load old messages on connect
 socket.on("loadMessages", (messages) => {  
@@ -92,6 +98,11 @@ socket.on("loadMessages", (messages) => {
 
 // Display new messages from others
 socket.on("message", displayMessage);
+
+/*//joined pop up 
+function joinedChat() {
+
+}*/
 
 // --- Event listeners ---
 sendBtn.addEventListener("click", sendMessage);

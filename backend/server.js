@@ -33,18 +33,32 @@ io.on("connection", (socket) => {
 
   // Handle incoming messages
   socket.on("sendMessage", async (msgData) => {
-    try {
-        // Save message to database
-        const message = new Message(msgData);
-        const savedMessage = await message.save(); // contains createdAt, _id, etc.
-        //console.log("saved:", savedMessage);
+  try {
+    //sanitize chat
+    const cleanMessage = {
+      username: msgData.username,
+      userId: msgData.userId,
+      userColor: msgData.userColor, 
+      userCountry: msgData.userCountry,
+      text: msgData.text.substring(0, 500), // limit message length
+      time: msgData.time,
+    };
 
-        // Broadcast saved message to all connected clients
-        io.emit("message", savedMessage);
-    } catch (err) {
-        console.error("Error saving message:", err);
+    //color
+    const allowedColors = ["#a12e20", "#3eaf5f", "#2244f5", "#e16efd", "#785651", "#d95de0"];
+    if (!allowedColors.includes(cleanMessage.userColor)) {
+      cleanMessage.userColor = "#000000"; // fallback
     }
-  });
+
+    const message = new Message(cleanMessage);
+    const savedMessage = await message.save();
+
+    io.emit("message", savedMessage);
+  } catch (err) {
+    console.error("Error saving message:", err);
+  }
+});
+
 
   // Handle disconnect
   socket.on("disconnect", () => {
