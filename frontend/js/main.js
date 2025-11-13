@@ -23,7 +23,7 @@ fetch("https://ipapi.co/json/")
   })
   .catch(() => { input.disabled = false; });
 
-// --- Generate random color and unique ID for the user ---
+// --- Generate random color and unique ID ---
 function getRandomColor() {
   return "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0");
 }
@@ -31,32 +31,30 @@ function getRandomColor() {
 const userColor = getRandomColor();
 const userId = Math.floor(10000 + Math.random() * 90000);
 
-
 // --- Send message ---
 function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
 
+  const safeText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // sanitize input
   const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  const msgData = { username, userId, userColor, userCountry, text, time };
 
+  const msgData = { username, userId, userColor, userCountry, text: safeText, time };
   socket.emit("sendMessage", msgData);
   input.value = "";
 }
 
-// --- Display message helper ---
+// --- Display message ---
 function displayMessage(msgData) {
   const flag = msgData.userCountry || "🌍"; 
   const newMessage = document.createElement("div");
   newMessage.classList.add("bubble");
 
-  const safeColor = allowedColors.includes(msgData.userColor) ? msgData.userColor : "#000000";
-
   if (msgData.text.includes(`@${username}`)) newMessage.classList.add("pinged");
 
   newMessage.innerHTML = `
     <div class="message-header">
-      <span class="username" style="color:${safeColor}">
+      <span class="username" style="color:${msgData.userColor}">
         ${msgData.username} ${flag}
       </span>
       <span class="userid">#id:${msgData.userId}~${msgData.time}</span>
@@ -76,4 +74,9 @@ socket.on("message", displayMessage);
 
 // --- Event listeners ---
 sendBtn.addEventListener("click", sendMessage);
-input.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); sendMessage(); } });
+input.addEventListener("keydown", event => { 
+  if (event.key === "Enter") { 
+    event.preventDefault(); 
+    sendMessage(); 
+  } 
+});
