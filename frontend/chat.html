@@ -1,33 +1,33 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Yapppster - Chat</title>
-        <link rel="stylesheet" href="/css/style.css">
-    </head>
-    <body>
-        <div class="container">
-            <div class="container1">
-                <header>
-                    <a href="index.html" class="brand">
-                        <div class="logo">Y</div>
-                        <div>
-                            <strong>YAPPSTER</strong>
-                            <div style="font-size: 12px;">yapp with strangers</div>
-                        </div>
-                    </a>
-                    <nav class="nav"></nav>
-                </header>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yappster - Chat</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <a href="index.html" class="brand">
+            <div class="logo">Y</div>
+            <div>
+                <strong>YAPPSTER</strong>
+                <div style="font-size: 12px;">yapp with strangers</div>
             </div>
-            <div class="container2">
-                <div class="chatbox">
-                    <div class="messages" id="messages"></div>
-                    <div class="message">
-                        <input id="input" type="text" placeholder="type your message here..." size="25" style="align-self: baseline;"> <button id="sendBtn">send</button>
-                    </div>
-                </div>
-            </div>
+        </a>
+    </header>
+
+    <div class="chatbox">
+        <div class="messages" id="messages"></div>
+        <div class="message">
+            <input id="input" type="text" placeholder="Type your message here..." />
+            <button id="sendBtn">Send</button>
         </div>
-    <script src="/socket.io/socket.io.js"></script>    
-    <script src="/js/main.js"></script>    
-    </body>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/main.js"></script>
+</body>
 </html>

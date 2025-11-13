@@ -8,8 +8,8 @@ const Message = require("./models/message");
 
 // --- Connect to MongoDB ---
 mongoose.connect(process.env.MONGODB_URI)
- .then(() => console.log("✅ Connected to MongoDB"))
- .catch(err => console.error("❌ Connection error:", err));
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch(err => console.error("❌ Connection error:", err));
 
 // --- Express + HTTP + Socket.IO setup ---
 const app = express();
@@ -20,49 +20,40 @@ const io = new Server(server);
 app.use(express.static(path.join(__dirname, "../frontend")));
 
 // --- Socket.IO: handle connections ---
+const allowedColors = ["#a12e20", "#3eaf5f", "#2244f5", "#e16efd", "#785651", "#d95de0"];
+
 io.on("connection", (socket) => {
 
-  // Send last 20 messages to the newly connected user
+  // Send last 20 messages to new connection
   Message.find()
-    .sort({ createdAt: -1 }) // oldest first
+    .sort({ createdAt: -1 })
     .limit(20)
-    .then(messages => { 
-      socket.emit("loadMessages", messages.reverse());
-    })
+    .then(messages => socket.emit("loadMessages", messages.reverse()))
     .catch(err => console.error("Error loading messages:", err));
 
   // Handle incoming messages
   socket.on("sendMessage", async (msgData) => {
-  try {
-    //sanitize chat
-    const cleanMessage = {
-      username: msgData.username,
-      userId: msgData.userId,
-      userColor: msgData.userColor, 
-      userCountry: msgData.userCountry,
-      text: msgData.text.substring(0, 500), // limit message length
-      time: msgData.time,
-    };
+    try {
+      // sanitize message
+      const cleanMessage = {
+        username: msgData.username.substring(0, 50),
+        userId: msgData.userId,
+        userColor: allowedColors.includes(msgData.userColor) ? msgData.userColor : "#000000",
+        userCountry: msgData.userCountry || "🌍",
+        text: msgData.text.substring(0, 500),
+        time: msgData.time,
+      };
 
-    //color
-    const allowedColors = ["#a12e20", "#3eaf5f", "#2244f5", "#e16efd", "#785651", "#d95de0"];
-    if (!allowedColors.includes(cleanMessage.userColor)) {
-      cleanMessage.userColor = "#000000"; // fallback
+      const message = new Message(cleanMessage);
+      const savedMessage = await message.save();
+
+      io.emit("message", savedMessage);
+    } catch (err) {
+      console.error("Error saving message:", err);
     }
-
-    const message = new Message(cleanMessage);
-    const savedMessage = await message.save();
-
-    io.emit("message", savedMessage);
-  } catch (err) {
-    console.error("Error saving message:", err);
-  }
-});
-
-
-  // Handle disconnect
-  socket.on("disconnect", () => {
   });
+
+  socket.on("disconnect", () => {});
 });
 
 // Start the server
