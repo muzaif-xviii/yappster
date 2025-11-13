@@ -24,11 +24,13 @@ fetch("https://ipapi.co/json/")
   .catch(() => { input.disabled = false; });
 
 // --- Generate random color and unique ID for the user ---
-const allowedColors = ["#a12e20", "#3eaf5f", "#2244f5", "#e16efd", "#785651", "#d95de0"];
-function getRandomColor() { return allowedColors[Math.floor(Math.random() * allowedColors.length)]; }
+function getRandomColor() {
+  return "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0");
+}
 
 const userColor = getRandomColor();
 const userId = Math.floor(10000 + Math.random() * 90000);
+
 
 // --- Send message ---
 function sendMessage() {

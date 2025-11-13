@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
       const cleanMessage = {
         username: msgData.username.substring(0, 50),
         userId: msgData.userId,
-        userColor: allowedColors.includes(msgData.userColor) ? msgData.userColor : "#000000",
+        userColor: msgData.userColor,
         userCountry: msgData.userCountry || "🌍",
         text: msgData.text.substring(0, 500),
         time: msgData.time,
