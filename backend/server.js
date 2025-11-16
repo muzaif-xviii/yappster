@@ -95,7 +95,13 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("disconnect", () => {});
+  socket.on("disconnect", (reason) => {
+    console.warn("Socket disconnected:", reason);
+    //auto reconnect
+    if (reason === "transport close" || "io server disconnect") {
+      socket.connect();
+    }
+  });
 });
 
 // Start the server
