@@ -48,7 +48,7 @@ app.get("/ws-token", (req, res) => {
   validClientTokens.add(temp);
 
   //auto expire token
-  setTimeout(() => validClientTokens.delete(temp), 10000);
+  setTimeout(() => validClientTokens.delete(temp), 1800000);
   res.json({token: temp });
 });
 
