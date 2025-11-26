@@ -116,10 +116,12 @@ body{
 }
 
 .message button{
-    cursor: pointer;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
+  background-color: #0f0f0f;
+  color: aliceblue;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
 }
 
 .bubble {
@@ -204,13 +206,15 @@ body{
   }
 
   .message {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 6px;
   }
 
   .message input {
-    width: 100%;
+    flex: 1;
+    width: 95%;
     font-size: 15px;
   }
 
